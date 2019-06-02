@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.web.design.mapper.SceneMapper">
+
+    <resultMap type="java.util.HashMap" id="sceneMap">
+        <id column="uid" property="uid" />
+        <result column="designPropName" property="designPropName" />
+        <result column="sceneName" property="sceneName" />
+        <result column="beginTime" property="beginTime" />
+        <result column="codeJava" property="codeJava" />
+        <result column="testPassRate" property="testPassRate" />
+    </resultMap>
+
+    <select id="getScenesByUser" resultType="java.util.ArrayList" resultMap="sceneMap" parameterType="java.lang.String">
+        select scene_history.* from scene_history natural join user_info where userName=#{username}
+    </select>
+
+    <insert id="insertScene" parameterType="java.util.HashMap">
+        insert into scene_history (uid, designPropName, sceneName, beginTime, testPassRate)
+                      values (#{uid}, #{designPropName}, #{sceneName}, #{beginTime}, #{testPassRate})
+    </insert>
+
+</mapper>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class UserController {
     @Autowired
     private UserMapper userCompletedInfo;
 
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public HashMap<String, Object> login(@RequestBody HashMap<String, Object> userInfo){
         String username=(String)userInfo.get("userName");
@@ -42,14 +44,20 @@ public class UserController {
         }
     }
 
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public HashMap<String, Object> register(@RequestBody HashMap<String, Object> userInfo){
         String username=(String)userInfo.get("userName");
         String password=(String)userInfo.get("password");
         String email=(String)userInfo.get("email");
         password=passwordEncoder.encode(password);
-        userCompletedInfo.insertUserInfo(username, password, email);
         HashMap<String, Object> result=userCompletedInfo.getUserInfo(username);
+        if(result!=null && result.size()>0){
+            userInfo.put("errorMsg", "注册失败");
+            return userInfo;
+        }
+        userCompletedInfo.insertUserInfo(username, password, email);
+        result=userCompletedInfo.getUserInfo(username);
         if(result!=null && result.size()>0) {
             return result;
         }
@@ -57,5 +65,12 @@ public class UserController {
             userInfo.put("errorMsg", "注册失败");
             return userInfo;
         }
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
+    public ArrayList<HashMap<String, Object> > getUsers(){
+        ArrayList<HashMap<String, Object> > users=userCompletedInfo.getAllUsers();
+        return users;
     }
 }

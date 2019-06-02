@@ -9,11 +9,16 @@
         <result column="userName" property="userName" />
         <result column="password" property="password" />
         <result column="inform" property="inform" />
+        <result column="createTime" property="registerTime" />
     </resultMap>
 
     <select id="getUserInfo" parameterType="java.lang.String" resultType="java.util.HashMap"
             resultMap="userMap">
         select * from user_info where userName=#{username}
+    </select>
+
+    <select id="getAllUsers" resultType="java.util.ArrayList" resultMap="userMap">
+        select * from user_info where not uid=0
     </select>
 
     <insert id="insertUserInfo" parameterType="java.util.HashMap">
