@@ -26,12 +26,16 @@ public class TestCombination implements Tester {
             employee.getMethod("getSubordinates");
             rate+=25;
 
-            employee.getMethod("toString");
-            rate+=25;
+            Method toString=employee.getMethod("toString");
+            String str=(String)toString.invoke(employee.getConstructor
+                    (String.class, String.class, int.class).newInstance("name", "dept", 100));
+            if(str.split(" ")[0].equals("Employee")) {
+                rate += 25;
+            }
 
             System.out.println(rate);
             return rate;
-        } catch (ClassNotFoundException | NoSuchMethodException | ClassCastException | NoSuchFieldException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | ClassCastException | NoSuchFieldException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             System.out.println(rate);
             return rate;

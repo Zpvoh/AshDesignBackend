@@ -4,12 +4,12 @@
 <mapper namespace="com.web.design.mapper.SceneMapper">
 
     <resultMap type="java.util.HashMap" id="sceneMap">
-        <id column="uid" property="uid" />
-        <result column="designPropName" property="designPropName" />
-        <result column="sceneName" property="sceneName" />
-        <result column="beginTime" property="beginTime" />
-        <result column="codeJava" property="codeJava" />
-        <result column="testPassRate" property="testPassRate" />
+        <id column="uid" property="uid"/>
+        <result column="designPropName" property="designPropName"/>
+        <result column="sceneName" property="sceneName"/>
+        <result column="beginTime" property="beginTime"/>
+        <result column="codeJava" property="codeJava"/>
+        <result column="testPassRate" property="testPassRate"/>
     </resultMap>
 
     <select id="getScenesByUser" resultType="java.util.ArrayList" resultMap="sceneMap" parameterType="java.lang.String">

@@ -58,7 +58,6 @@ public class Compiler{
             files.add(fileObject);
         }
 
-        //Iterable<? extends JavaFileObject> files = Arrays.asList(fileObject);
         String flag = "-d";
         String outDir = "";
 
