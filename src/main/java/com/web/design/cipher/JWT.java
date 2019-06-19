@@ -3,10 +3,7 @@ package com.web.design.cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -70,13 +67,17 @@ public class JWT {
         if(key==null)
             readKey(DEFAULT_FILE);
 //This line will throw an exception if it is not a signed JWS (as expected)
-        Claims claims = Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(key))
-                .parseClaimsJws(jwt).getBody();
-        System.out.println("ID: " + claims.getId());
-        System.out.println("Subject: " + claims.getSubject());
-        System.out.println("Issuer: " + claims.getIssuer());
-        System.out.println("Expiration: " + claims.getExpiration());
-        return claims;
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                    .parseClaimsJws(jwt).getBody();
+            System.out.println("ID: " + claims.getId());
+            System.out.println("Subject: " + claims.getSubject());
+            System.out.println("Issuer: " + claims.getIssuer());
+            System.out.println("Expiration: " + claims.getExpiration());
+            return claims;
+        }catch (ExpiredJwtException e){
+            return null;
+        }
     }
 }

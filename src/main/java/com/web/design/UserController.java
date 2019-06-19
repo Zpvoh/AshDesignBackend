@@ -1,8 +1,10 @@
 package com.web.design;
 
 
+import com.web.design.cipher.JWT;
 import com.web.design.cipher.PasswordEncoder;
 import com.web.design.mapper.UserMapper;
+import io.jsonwebtoken.Claims;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -17,8 +19,6 @@ import java.util.List;
 
 @RestController
 public class UserController {
-    private final String salt = "be5e0323a9195ade5f56695ed9f2eb6b036f3e6417115d0cbe2fb9d74d8740406838dc84f78f7d978efe989a98c90883486ae7c4838b";
-    private PasswordEncoder passwordEncoder=new PasswordEncoder(salt, "SHA");
 
     @Autowired
     private UserMapper userCompletedInfo;
@@ -31,7 +31,10 @@ public class UserController {
         HashMap<String, Object> result=userCompletedInfo.getUserInfo(username);
         if(result!=null && result.size()>0) {
             String rightPass=(String)result.get("password");
-            if(passwordEncoder.isPasswordValid(rightPass, password)){
+            if(TokenUtil.passwordEncoder.isPasswordValid(rightPass, password)){
+                //result=new HashMap<>();
+                result.put("token",
+                        JWT.createJWT(username, String.valueOf(result.get("uid")), password, 86400000));
                 return result;
             }else {
                 userInfo.put("errorMsg", "密码不正确");
@@ -49,8 +52,9 @@ public class UserController {
     public HashMap<String, Object> register(@RequestBody HashMap<String, Object> userInfo){
         String username=(String)userInfo.get("userName");
         String password=(String)userInfo.get("password");
+        String originPass=new String(password);
         String email=(String)userInfo.get("email");
-        password=passwordEncoder.encode(password);
+        password=TokenUtil.passwordEncoder.encode(password);
         HashMap<String, Object> result=userCompletedInfo.getUserInfo(username);
         if(result!=null && result.size()>0){
             userInfo.put("errorMsg", "注册失败");
@@ -59,6 +63,9 @@ public class UserController {
         userCompletedInfo.insertUserInfo(username, password, email);
         result=userCompletedInfo.getUserInfo(username);
         if(result!=null && result.size()>0) {
+            //result=new HashMap<>();
+            result.put("token",
+                    JWT.createJWT(username, String.valueOf(result.get("uid")), originPass, 86400000));
             return result;
         }
         else {
@@ -69,8 +76,29 @@ public class UserController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
-    public ArrayList<HashMap<String, Object> > getUsers(){
-        ArrayList<HashMap<String, Object> > users=userCompletedInfo.getAllUsers();
-        return users;
+    public ArrayList<HashMap<String, Object> > getUsers(@RequestParam(value = "token") String token){
+        String username=JWT.parseJWT(token).getId();
+        if(tokenValidate(token) && username.equals("root")) {
+            ArrayList<HashMap<String, Object>> users = userCompletedInfo.getAllUsers();
+            return users;
+        }
+
+        return new ArrayList<>();
+    }
+
+    public boolean tokenValidate(String token){
+        Claims claims= JWT.parseJWT(token);
+        if(claims==null)
+            return false;
+
+        String username=claims.getId();
+        String password=claims.getSubject();
+        HashMap<String, Object> result=userCompletedInfo.getUserInfo(username);
+        if(result!=null && result.size()>0) {
+            String rightPass=(String)result.get("password");
+            return TokenUtil.passwordEncoder.isPasswordValid(rightPass, password);
+        }
+
+        return false;
     }
 }

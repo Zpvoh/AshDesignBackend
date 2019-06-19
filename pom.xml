@@ -95,6 +95,7 @@
                     <repository>spotify/foobar</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
+                        <ROOT_NAME>.</ROOT_NAME>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>

@@ -17,12 +17,6 @@ public class Compiler{
     public Compiler() {
     }
 
-    /*public Compiler(String className, String javaCodes) {
-        this.className = className;
-        this.javaCodes = javaCodes;
-        //this.compiledClass = compile(className, javaCodes);
-    }*/
-
     public Class<?> compile(String className, String javaCodes) {
         className = "tmp." + className;
         javaCodes = "package tmp;\n" + javaCodes;
