@@ -1,5 +1,5 @@
 # Blockly pj 说明文档
-                                                                          成员：邱轶扬、安晨鑫、王国镔、崔帅帅
+                                                                          成员：邱轶扬(25%)、安晨鑫(25%)、王国镔(25%)、崔帅帅(25%)
 
 ## Part 1 项目组织以及其中每个文件的说明
 * ### 前端项目组织  
@@ -97,6 +97,34 @@ toolbox.ts| 工具箱
     │   └── UserMapper.xml
     └── templates
 
+```
+
+* ### 后端数据库设计
+    后端数据库结构如下图所示
+
+```mysql
+create database advanced_web_pj;
+use advanced_web_pj;
+
+create table scene_history
+(
+  uid            int  not null,
+  designPropName text not null,
+  sceneName      text not null,
+  beginTime      text null,
+  testPassRate   text null
+) charset=utf8;
+
+create table user_info
+(
+  uid        int auto_increment
+    primary key,
+  email      varchar(30)                         not null,
+  userName   text                                not null,
+  password   text                                not null,
+  createTime timestamp default CURRENT_TIMESTAMP not null
+)
+  charset = utf8;
 ```
 
 ## Part 2 关键功能实现的细节
@@ -268,39 +296,38 @@ toolbox.ts| 工具箱
     1. JavaCompiler类编译  
         通过设置classpath和输入JavaFileObject集合对象编译
         
-        
         自定义实现JavaFileObject接口的类InMemoryJavaFileObject以实现内存中代码编译
 
         具体代码如下所示：
 
         ```java
-        public boolean compiles(ArrayList<String> classNames, ArrayList<String> javaCodes){
-        InMemoryJavaFileObject fileObject=null;
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-
-        ArrayList<JavaFileObject> files=new ArrayList<>();
-        for(int i=0; i<javaCodes.size(); i++) {
-            String className = "tmp." + classNames.get(i);
-            String code = "package tmp;\n" + javaCodes.get(i);
-
-            fileObject = new InMemoryJavaFileObject(className, code);
-            files.add(fileObject);
-        }
-
-        String flag = "-d";
-        String outDir = "";
-
-        File classPath = new File(".");
-        outDir = classPath.getAbsolutePath() + File.separator;
-
-
-        Iterable<String> options = Arrays.asList(flag, outDir);
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, options, null, files);
-
-        return task.call();
-
-        }
+            public boolean compiles(ArrayList<String> classNames, ArrayList<String> javaCodes){
+            InMemoryJavaFileObject fileObject=null;
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+    
+            ArrayList<JavaFileObject> files=new ArrayList<>();
+            for(int i=0; i<javaCodes.size(); i++) {
+                String className = "tmp." + classNames.get(i);
+                String code = "package tmp;\n" + javaCodes.get(i);
+    
+                fileObject = new InMemoryJavaFileObject(className, code);
+                files.add(fileObject);
+            }
+    
+            String flag = "-d";
+            String outDir = "";
+    
+            File classPath = new File(".");
+            outDir = classPath.getAbsolutePath() + File.separator;
+    
+    
+            Iterable<String> options = Arrays.asList(flag, outDir);
+            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, options, null, files);
+    
+            return task.call();
+    
+            }
         ```
 
         类实现如下所示
