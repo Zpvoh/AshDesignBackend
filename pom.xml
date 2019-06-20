@@ -92,7 +92,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>spotify/foobar</repository>
+                    <repository>design_pj</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <ROOT_NAME>.</ROOT_NAME>

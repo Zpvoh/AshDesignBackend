@@ -21,7 +21,10 @@ public class TestSingleton implements Tester {
 
             Method getIns=classroom.getMethod("getInstance");
             if(Modifier.isStatic(getIns.getModifiers()))
-                rate+=25;
+                rate+=13;
+
+            Method showMsg=classroom.getMethod("showMessage");
+            rate+=12;
 
             Object ins=getIns.invoke(null);
             if(classroom.isInstance(ins))
